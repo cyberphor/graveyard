@@ -1,2 +1,2 @@
 # `graveyard`
-A collection of dead code repositories.
+My collection of dead code repositories.
