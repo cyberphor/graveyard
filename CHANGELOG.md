@@ -1,10 +1,11 @@
 # Changelog
 
-## [0.1.0] - 2026-10-23
+## [0.1.0] - 2026-11-21
 ### Added
 * Added `agents`
 * Added `azure-bootstraps`
 * Added `cookiecutter-agents`
+* Added `finch`
 * Added `mlops-cookbook`
 * Added `security-demos`
 
