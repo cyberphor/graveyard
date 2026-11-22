@@ -1,0 +1,13 @@
+djangorestframework-simplejwt[crypto]
+djangorestframework
+Django
+mysqlclient
+django-mysql
+pytest
+coverage
+
+
+opentelemetry-sdk
+opentelemetry-distro[otlp]
+opentelemetry-exporter-otlp-proto-http
+requests

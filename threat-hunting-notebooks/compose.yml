@@ -1,0 +1,6 @@
+services:
+  huntbook:
+    image: huntbook:latest
+    build: .
+    ports: 
+    - 8888:8888

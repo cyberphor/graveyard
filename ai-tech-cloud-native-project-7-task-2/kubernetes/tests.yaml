@@ -1,0 +1,38 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: run-tests
+  namespace: default
+  labels:
+    app.kubernetes.io/version: "0.1"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.12.1"
+    tekton.dev/categories: Security
+    tekton.dev/tags: CLI, grype
+    tekton.dev/displayName: "grype"
+    tekton.dev/platforms: "linux/amd64,linux/arm64,linux/ppc64le,linux/390x"
+spec:
+  description: >-
+    A simple task that allows for easy testing of both repositories
+  workspaces:
+    - name: source
+  steps:
+    - name: run-fastapi-tests
+      image: python:3.10
+      workingDir: $(workspaces.source.path)/src/fastapi-p4
+      script: |
+        set -euxo
+        pip install poetry
+        poetry install --with dev
+        poetry run coverage run -m pytest
+        poetry run coverage report --format=text -m
+    - name: run-django-tests
+      image: python:3.10
+      workingDir: $(workspaces.source.path)/src/django
+      script: |
+        set -euxo
+        pip install -r requirements.txt
+        python3 manage.py test
+        coverage run --source='.' manage.py test task3
+        coverage report --format=text -m

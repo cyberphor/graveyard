@@ -1,0 +1,40 @@
+name: Build and Deploy Job
+
+env:
+  AZURE_FUNCTIONAPP_NAME: my-first-function-20231201120945143
+  POM_XML_DIRECTORY: '.'
+  POM_FUNCTIONAPP_NAME: my-first-function-20231201120945143
+  JAVA_VERSION: '1.8.x'
+
+on:
+  pull_request:
+    branches: [develop]
+    types: [closed]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: "Checkout repository"
+      uses: actions/checkout@v4
+    - name: "Login to Azure"
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: "Setup Java"
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+    - name: "Restore Project Dependencies Using Mvn"
+      shell: pwsh
+      run: |
+        pushd './${{ env.POM_XML_DIRECTORY }}'
+        mvn clean package
+        mvn azure-functions:package
+        popd
+    - name: "Run Azure Functions Action"
+      uses: Azure/functions-action@v1
+      with:
+        app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+        package: './${{ env.POM_XML_DIRECTORY }}/target/azure-functions/${{ env.POM_FUNCTIONAPP_NAME }}'
+        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_STAGING_PUBLISH_PROFILE }}

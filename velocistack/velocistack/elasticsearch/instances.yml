@@ -1,0 +1,5 @@
+instances:
+- name: "elasticsearch"
+  ip: 172.16.0.10
+- name: "kibana"
+  ip: 172.16.0.30
