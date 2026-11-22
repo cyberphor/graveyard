@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nginx-gateway
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: nginx-gateway
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: nginx-gateway-fabric
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: nginx-gateway-fabric
+      version: '>=1.2.0'
+  targetNamespace: nginx-gateway
+  interval: 10m
+  releaseName: ngf

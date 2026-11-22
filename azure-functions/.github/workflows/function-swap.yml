@@ -1,0 +1,26 @@
+name: Swap Job
+
+env:
+  AZURE_FUNCTIONAPP_NAME: my-first-function-20231201120945143
+  POM_XML_DIRECTORY: '.'
+  POM_FUNCTIONAPP_NAME: my-first-function-20231201120945143
+  JAVA_VERSION: '1.8.x'
+  RESOURCE_GROUP: java-functions-group
+
+on:
+  pull_request:
+    branches: [main]
+    types: [closed]
+
+jobs:
+  swap-function:
+    if: ${{ github.head_ref == 'develop' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2  
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: 'Swap the Azure Function'
+        run: |
+          az functionapp deployment slot swap -g java-functions-group -n my-first-function-20231201120945143 --slot staging --target-slot production

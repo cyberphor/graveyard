@@ -1,0 +1,69 @@
+services:
+  postgres:
+    profiles: 
+    - ctfconsole
+    - postgres
+    build: postgres
+    image: postgres:${VERSION}
+    container_name: postgres
+    hostname: ${POSTGRES_HOST}
+    env_file:
+      - .env
+    volumes:
+      - logs:/var/log/postgresql/
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    networks:
+      - postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d ${POSTGRES_DB} -U ${POSTGRES_USER}" ]
+      start_period: 5s
+      timeout: 3s
+      retries: 2
+      interval: 5s
+  backend:
+    profiles: 
+      - ctfconsole
+      - ctfconsole_backend
+    build: backend
+    image: ctfconsole_backend:${VERSION}
+    container_name: ctfconsole_backend
+    hostname: ${CTFCONSOLE_API_HOST}
+    env_file:
+      - .env
+    volumes:
+      - logs:/var/log/ctfconsole/
+      - data:/opt/ctfconsole/database
+    ports:
+      - ${CTFCONSOLE_API_PORT}:${CTFCONSOLE_API_PORT}
+    networks:
+      - postgres
+      - ctfconsole_frontend
+    depends_on:
+      postgres:
+        condition: service_healthy
+  frontend:
+    profiles: 
+      - ctfconsole
+      - ctfconsole_frontend
+    build: frontend
+    image: ctfconsole_frontend:${VERSION}
+    container_name: ctfconsole_frontend
+    hostname: ${CTFCONSOLE_UI_HOST}
+    env_file:
+      - .env
+    volumes:
+      - ./frontend/src:/opt/ctfconsole/src
+      - ./frontend/public:/opt/ctfconsole/public
+    ports:
+      - ${PORT}:${PORT}
+    networks:
+      - ctfconsole_frontend
+
+volumes:
+  logs:
+  data:
+
+networks:
+  postgres:
+  ctfconsole_frontend:

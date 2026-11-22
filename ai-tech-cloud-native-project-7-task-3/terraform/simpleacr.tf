@@ -1,0 +1,66 @@
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "=3.99.0"
+    }
+    flux = {
+      source  = "fluxcd/flux"
+      version = ">=0.25.0"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">=2.18.0"
+    }
+    external = {
+      source  = "hashicorp/external"
+      version = ">=2.3.1"
+    }
+    github = {
+      source  = "integrations/github"
+      version = ">=5.18.0"
+    }
+  }
+}
+
+provider "azurerm" {
+  features {}
+}
+
+
+
+
+provider "github" {
+  owner = var.github_org
+  token = var.github_token
+}
+
+resource "tls_private_key" "flux" {
+  algorithm   = "ECDSA"
+  ecdsa_curve = "P256"
+}
+
+resource "github_repository_deploy_key" "this" {
+  title      = "Flux"
+  repository = var.github_repository
+  key        = tls_private_key.flux.public_key_openssh
+  read_only  = "false"
+}
+
+
+
+
+
+
+provider "kubernetes" {
+  host                   = azurerm_kubernetes_cluster.aks.kube_config.0.host
+  client_certificate     = base64decode(azurerm_kubernetes_cluster.aks.kube_config.0.client_certificate)
+  client_key             = base64decode(azurerm_kubernetes_cluster.aks.kube_config.0.client_key)
+  cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.aks.kube_config.0.cluster_ca_certificate)
+}
+
+# Add flux terraform configuration here.
+
+
+
+# Add task2 terraform configuration here.

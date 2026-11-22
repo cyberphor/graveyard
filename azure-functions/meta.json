@@ -1,0 +1,8 @@
+{
+    "github_username": "cyberphor",
+    "repository": "cicd-functions",
+    "token": "",
+    "function_app_name": "my-first-function-20231201120945143",
+    "task1_function_endpoint": "https://my-first-function-20231201120945143.azurewebsites.net/api/HttpExample", 
+    "task2_function_endpoint": "https://my-first-function-20231201120945143.azurewebsites.net/api/HttpExample"
+}
